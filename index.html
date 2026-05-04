@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriFit - Seu Gestor de Saúde</title>
+    
+    <!-- CSS (O "Design" e a Imagem de Fundo) -->
+    <style>
+        body {
+            /* Imagem de fundo profissional focada em saúde */
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&q=80&w=1600');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px); /* Efeito de vidro fosco */
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        h1 { margin-bottom: 20px; font-weight: 300; letter-spacing: 2px; }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        input, select {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+
+        button {
+            background-color: #27ae60;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 20px;
+        }
+
+        button:hover { background-color: #2ecc71; }
+
+        #resultado {
+            margin-top: 25px;
+            padding: 15px;
+            background: rgba(39, 174, 96, 0.2);
+            border-radius: 10px;
+            border-left: 5px solid #27ae60;
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>NUTRIFIT</h1>
+        
+        <div class="form">
+            <input type="text" id="nome" placeholder="Nome do Usuário">
+            <input type="number" id="peso" placeholder="Peso atual (kg)">
+            <input type="number" id="altura" placeholder="Altura (cm)">
+            <input type="number" id="idade" placeholder="Idade">
+            
+            <select id="sexo">
+                <option value="" disabled selected>Selecione o Sexo</option>
+                <option value="M">Masculino</option>
+                <option value="F">Feminino</option>
+            </select>
+
+            <select id="objetivo">
+                <option value="" disabled selected>Seu Objetivo</option>
+                <option value="1">Emagrecer (Déficit)</option>
+                <option value="2">Manter Peso</option>
+                <option value="3">Engordar (Ganho de Massa)</option>
+            </select>
+
+            <button onclick="calcular()">Calcular Agora</button>
+        </div>
+
+        <div id="resultado" class="hidden">
+            <h3 id="res-titulo"></h3>
+            <p id="meta-valor" style="font-size: 1.2em; font-weight: bold;"></p>
+        </div>
+    </div>
+
+    <!-- JavaScript (A Lógica de Programação) -->
+    <script>
+        function calcular() {
+            const nome = document.getElementById('nome').value;
+            const peso = parseFloat(document.getElementById('peso').value);
+            const altura = parseFloat(document.getElementById('altura').value);
+            const idade = parseInt(document.getElementById('idade').value);
+            const sexo = document.getElementById('sexo').value;
+            const objetivo = parseInt(document.getElementById('objetivo').value);
+
+            // Validação simples
+            if (!nome || !peso || !altura || !idade || !sexo || !objetivo) {
+                alert("Por favor, preencha todos os campos corretamente.");
+                return;
+            }
+
+            let tmb;
+            // Cálculo da Taxa Metabólica Basal (Mifflin-St Jeor)[cite: 1]
+            if (sexo === 'M') {
+                tmb = (10 * peso) + (6.25 * altura) - (5 * idade) + 5;
+            } else {
+                tmb = (10 * peso) + (6.25 * altura) - (5 * idade) - 161;
+            }
+
+            // Ajuste automático conforme o objetivo selecionado[cite: 1]
+            let meta;
+            if (objetivo === 1) {
+                meta = tmb - 500; // Meta para emagrecer[cite: 1]
+            } else if (objetivo === 3) {
+                meta = tmb + 400; // Meta para engordar[cite: 1]
+            } else {
+                meta = tmb; // Meta para manter o peso[cite: 1]
+            }
+
+            // Atualização da tela com o resultado
+            document.getElementById('res-titulo').innerText = `Resultado para ${nome}:`;
+            document.getElementById('meta-valor').innerText = `${meta.toFixed(0)} kcal por dia`;
+            document.getElementById('resultado').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
